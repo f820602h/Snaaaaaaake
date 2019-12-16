@@ -44,6 +44,8 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex';
+
 export default {
   name: 'Snake',
   data() {
@@ -62,14 +64,22 @@ export default {
     };
   },
   mounted() {
-    window.addEventListener('keydown', (e) => {
-      this.redirect(e);
-    });
+    window.addEventListener('keydown', this.redirect);
     this.getBestScore();
     this.play();
     this.createFood();
   },
+  watch: {
+    dead() {
+      window.removeEventListener('keydown', this.redirect);
+      window.clearInterval(this.time);
+      if (this.score > this.bestScore) localStorage.setItem('best', this.score);
+      localStorage.setItem('lastScore', this.score);
+      this.SET_GAME_STATE('End');
+    },
+  },
   methods: {
+    ...mapMutations(['SET_GAME_STATE']),
     getBestScore() {
       this.bestScore = localStorage.getItem('best') ? localStorage.getItem('best') : 0;
     },
@@ -133,12 +143,7 @@ export default {
     },
     isDead(snakeX, snakeY) {
       const snakeBody = this.snake.slice(1, this.snake.length);
-      const death = snakeBody.some(body => snakeX === body.x && snakeY === body.y);
-      if (death) {
-        window.clearInterval(this.time);
-        this.dead = true;
-        if (this.score > this.bestScore) localStorage.setItem('best', this.score);
-      }
+      this.dead = snakeBody.some(body => snakeX === body.x && snakeY === body.y);
     },
   },
 };

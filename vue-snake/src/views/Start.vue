@@ -1,21 +1,22 @@
 <template>
-  <div
-    class="start"
-    tabindex="-1"
-    @keydown.space="start"
-  >
+  <div class="start">
     <h2>SNAAAAAAKE</h2>
     <p>PRESS [SPACE] TO START</p>
   </div>
 </template>
 
 <script>
+import { mapMutations } from 'vuex';
+
 export default {
   name: 'Start',
+  mounted() {
+    window.addEventListener('keydown', (e) => {
+      if (e.which === 32) this.SET_GAME_STATE('Snake');
+    });
+  },
   methods: {
-    start() {
-      this.$router.push('/snake');
-    },
+    ...mapMutations(['SET_GAME_STATE']),
   },
 };
 </script>

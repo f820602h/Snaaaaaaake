@@ -1,24 +1,17 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Start from '../views/Start.vue';
+import App from '../App.vue';
 
 Vue.use(VueRouter);
-
 const routes = [
   {
     path: '/',
     name: 'Start',
-    component: Start,
+    component: App,
   },
   {
-    path: '/snake',
-    name: 'Snake',
-    component: () => import(/* webpackChunkName: "Snake" */ '../views/Snake.vue'),
-  },
-  {
-    path: '/end',
-    name: 'End',
-    component: () => import(/* webpackChunkName: "End" */ '../views/End.vue'),
+    path: '*',
+    redirect: '/',
   },
 ];
 
