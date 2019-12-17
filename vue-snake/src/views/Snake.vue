@@ -31,7 +31,17 @@
             top: food.y * zBox + 'px',
             left: food.x * zBox + 'px',
           }"
-        />
+        >
+          <div class="foodCon">
+            <div class="little"></div>
+            <div class="flex">
+              <div class="little"></div>
+              <div class="big"></div>
+              <div class="little"></div>
+            </div>
+            <div class="little"></div>
+          </div>
+        </div>
       </div>
       <div class="display">
         <h2><span>best</span>{{ bestScore }}</h2>
@@ -104,6 +114,7 @@ export default {
           if (this.direct === 'left') item.x = (item.x - 1 + this.xBox) % this.xBox;
           this.isDead(item.x, item.y);
           this.getPoint(item.x, item.y);
+          this.speedUp();
         } else {
           nowSnake.x = item.x;
           nowSnake.y = item.y;
@@ -124,7 +135,7 @@ export default {
     createFood() {
       const foodX = Math.floor(Math.random() * this.xBox);
       const foodY = Math.floor(Math.random() * this.yBox);
-      const double = this.snake.some(s => s.x === foodX && s.y === foodY);
+      const double = this.snake.some((s) => s.x === foodX && s.y === foodY);
       if (!double) {
         this.food.x = foodX;
         this.food.y = foodY;
@@ -141,9 +152,18 @@ export default {
         this.createFood();
       }
     },
+    speedUp() {
+      if (this.score > 30) {
+        this.speed = 75;
+      } else if (this.scroe > 50) {
+        this.speed = 50;
+      } else if (this.scroe > 100) {
+        this.speed = 30;
+      }
+    },
     isDead(snakeX, snakeY) {
       const snakeBody = this.snake.slice(1, this.snake.length);
-      this.dead = snakeBody.some(body => snakeX === body.x && snakeY === body.y);
+      this.dead = snakeBody.some((body) => snakeX === body.x && snakeY === body.y);
     },
   },
 };
@@ -200,6 +220,7 @@ export default {
     height: 640px;
     margin: 0 auto;
     background: #00035A;
+    overflow: hidden;
     .box{
       width: 40px;
       height: 40px;
@@ -223,7 +244,44 @@ export default {
       position: absolute;
       width: 40px;
       height: 40px;
-      background: yellow;
+      background: rgba(255,255,255,0.3);
+      box-shadow: 0px 0px 20px rgba(255,255,255,0.5);
+      &::after, &:before{
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -480px;
+        display: block;
+        width: 1000px;
+        height: 40px;
+        background: linear-gradient(to left, transparent, rgba(255,255,255,0.2), transparent);
+      }
+      &:before{
+        width: 40px;
+        height: 440px;
+        top: -200px;
+        left: 0;
+        background: linear-gradient(to top, transparent, rgba(255,255,255,0.2), transparent);
+      }
+      .foodCon{
+        transform: rotate(45deg);
+        .flex{
+          display: flex;
+          align-items: center;
+        }
+        .little{
+          width: 8px;
+          height: 8px;
+          margin: 0 auto;
+          background: #00ffe2;
+        }
+        .big{
+          width: 16px;
+          height: 16px;
+          margin: 4px;
+          background: #00ffe2;
+        }
+      }
     }
   }
 }
