@@ -85,7 +85,9 @@ export default {
       window.clearInterval(this.time);
       if (this.score > this.bestScore) localStorage.setItem('best', this.score);
       localStorage.setItem('lastScore', this.score);
-      this.SET_GAME_STATE('End');
+      setTimeout(() => {
+        this.SET_GAME_STATE('End');
+      }, 500);
     },
   },
   methods: {

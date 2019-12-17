@@ -11,12 +11,16 @@ import { mapMutations } from 'vuex';
 export default {
   name: 'Start',
   mounted() {
-    window.addEventListener('keydown', (e) => {
-      if (e.which === 32) this.SET_GAME_STATE('Snake');
-    });
+    window.addEventListener('keydown', this.startGame);
+  },
+  beforeDestroy() {
+    window.removeEventListener('keydown', this.startGame);
   },
   methods: {
     ...mapMutations(['SET_GAME_STATE']),
+    startGame(e) {
+      if (e.which === 32) this.SET_GAME_STATE('Snake');
+    },
   },
 };
 </script>

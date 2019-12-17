@@ -38,16 +38,20 @@ export default {
   },
   mounted() {
     this.getScore();
-    window.addEventListener('keydown', (e) => {
-      if (e.which === 89) this.SET_GAME_STATE('Snake');
-      if (e.which === 78) this.SET_GAME_STATE('Start');
-    });
+    window.addEventListener('keydown', this.setGameState);
+  },
+  beforeDestroy() {
+    window.removeEventListener('keydown', this.setGameState);
   },
   methods: {
     ...mapMutations(['SET_GAME_STATE']),
     getScore() {
       this.lastScore = localStorage.getItem('lastScore');
       this.bestScore = localStorage.getItem('best') ? localStorage.getItem('best') : 0;
+    },
+    setGameState(e) {
+      if (e.which === 89) this.SET_GAME_STATE('Snake');
+      if (e.which === 78) this.SET_GAME_STATE('Start');
     },
   },
 };
