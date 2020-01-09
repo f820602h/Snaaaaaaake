@@ -19,6 +19,5 @@ module.exports = {
     'vue',
   ],
   rules: {
-    "no-param-reassign": [2, { props: false }]
   },
 };

@@ -71,6 +71,7 @@ export default {
       score: 0,
       bestScore: null,
       dead: false,
+      isGetFood: false,
     };
   },
   mounted() {
@@ -104,28 +105,21 @@ export default {
       this.play();
     },
     snakeMove() {
-      const prevSnake = { x: 0, y: 0 };
-      const nowSnake = { x: 0, y: 0 };
-      this.snake.forEach((item, index) => {
+      let prevSnake;
+      this.snake = this.snake.map((item, index) => {
         if (index === 0) {
-          prevSnake.x = item.x;
-          prevSnake.y = item.y;
-          if (this.direct === 'up') item.y = (item.y - 1 + this.yBox) % this.yBox;
-          if (this.direct === 'down') item.y = (item.y + 1 + this.yBox) % this.yBox;
-          if (this.direct === 'right') item.x = (item.x + 1 + this.xBox) % this.xBox;
-          if (this.direct === 'left') item.x = (item.x - 1 + this.xBox) % this.xBox;
-          this.isDead(item.x, item.y);
-          this.getPoint(item.x, item.y);
-          this.speedUp();
+          if (this.direct === 'up') prevSnake = { x: item.x, y: (item.y - 1 + this.yBox) % this.yBox };
+          if (this.direct === 'down') prevSnake = { x: item.x, y: (item.y + 1 + this.yBox) % this.yBox };
+          if (this.direct === 'right') prevSnake = { x: (item.x + 1 + this.xBox) % this.xBox, y: item.y };
+          if (this.direct === 'left') prevSnake = { x: (item.x - 1 + this.xBox) % this.xBox, y: item.y };
+          this.isDead(prevSnake);
+          this.getfood(prevSnake);
         } else {
-          nowSnake.x = item.x;
-          nowSnake.y = item.y;
-          item.x = prevSnake.x;
-          item.y = prevSnake.y;
-          prevSnake.x = nowSnake.x;
-          prevSnake.y = nowSnake.y;
+          prevSnake = this.snake[index - 1];
         }
+        return prevSnake;
       });
+      if (this.isGetFood) this.getPoint();
     },
     play() {
       this.snakeMove();
@@ -145,14 +139,20 @@ export default {
         this.createFood();
       }
     },
-    getPoint(snakeX, snakeY) {
-      if (snakeX === this.food.x && snakeY === this.food.y) {
-        const lastbody = this.snake[this.snake.length - 1];
-        const newHead = { x: lastbody.x, y: lastbody.y };
-        this.score += 1;
-        this.snake.push(newHead);
-        this.createFood();
+    getfood(snake) {
+      if (snake.x === this.food.x && snake.y === this.food.y) {
+        this.isGetFood = true;
+      } else {
+        this.isGetFood = false;
       }
+    },
+    getPoint() {
+      const lastbody = this.snake[this.snake.length - 1];
+      const newHead = { x: lastbody.x, y: lastbody.y };
+      this.score += 1;
+      this.snake.push(newHead);
+      this.createFood();
+      this.speedUp();
     },
     speedUp() {
       if (this.score > 30) {
@@ -163,9 +163,9 @@ export default {
         this.speed = 30;
       }
     },
-    isDead(snakeX, snakeY) {
+    isDead(snake) {
       const snakeBody = this.snake.slice(1, this.snake.length);
-      this.dead = snakeBody.some((body) => snakeX === body.x && snakeY === body.y);
+      this.dead = snakeBody.some((body) => snake.x === body.x && snake.y === body.y);
     },
   },
 };
